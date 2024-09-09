@@ -6,6 +6,7 @@ import lombok.Data;
 import com.calendar.clush_back.auth.entity.UserRole;
 
 @Data
+@Schema(description = "사용자 반환 DTO")
 public class UserResponseDTO {
 
     @Schema(description = "사용자의 ID", example = "1")

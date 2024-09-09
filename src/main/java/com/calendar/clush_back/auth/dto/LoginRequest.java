@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@Schema(description = "로그인 DTO")
 public class LoginRequest {
 
     @Schema(description = "사용자의 이메일")

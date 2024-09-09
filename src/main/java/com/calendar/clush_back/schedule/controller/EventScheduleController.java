@@ -7,6 +7,7 @@ import com.calendar.clush_back.schedule.service.MenstrualCycleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "공통 이벤트 스케쥴 관리", description = "공통 스케쥴 관리 기능을 제공합니다.")
 @RestController
 @RequestMapping("/menstrual")
 public class EventScheduleController {
