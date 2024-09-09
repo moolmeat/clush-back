@@ -11,7 +11,7 @@ public class CalendarGroupDto {
     @Schema(description = "캘린더 그룹의 고유 ID", example = "1")
     private Long id;
 
-    @Schema(description = "캘린더 그룹의 이름", example = "크러시 홍보 1팀")
+    @Schema(description = "캘린더 그룹의 이름", example = "클러쉬 홍보 1팀")
     private String name;
 
     @Schema(description = "그룹에 속한 사용자들의 ID 목록", example = "[1001, 1002, 1003]")

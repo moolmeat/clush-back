@@ -15,7 +15,7 @@ public class ScheduleDto {
     @Schema(description = "일정 제목", example = "팀 미팅")
     private String title;
 
-    @Schema(description = "일정 내용", example = "크러시 캘린더웹 회의")
+    @Schema(description = "일정 내용", example = "클러쉬 캘린더웹 회의")
     private String content;
 
     @Schema(description = "시작 날짜", example = "2024-09-01")
