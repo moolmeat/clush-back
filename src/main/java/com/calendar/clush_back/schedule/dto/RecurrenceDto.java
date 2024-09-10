@@ -1,5 +1,6 @@
 package com.calendar.clush_back.schedule.dto;
 
+import com.calendar.clush_back.schedule.entity.RecurrenceUpdateType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import lombok.Data;
@@ -12,7 +13,7 @@ public class RecurrenceDto {
     private LocalDate exceptionDate;
 
     @Schema(description = "예외 유형 (EXCLUDE 또는 MODIFY)", example = "MODIFY")
-    private String exceptionType;  // "EXCLUDE" or "MODIFY"
+    private RecurrenceUpdateType updateType;  // "EXCLUDE" or "MODIFY"
 
     @Schema(description = "수정된 제목", example = "수정된 제목입니다.")
     private String modifiedTitle;

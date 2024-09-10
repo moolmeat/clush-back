@@ -23,8 +23,8 @@ public class Recurrence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate exceptionDate;  // 예외가 적용될 날짜
-    private String exceptionType;         // "EXCLUDE" (제외) or "MODIFY" (수정)
+    private LocalDate exceptionDate;      // 예외가 적용될 날짜
+    private RecurrenceUpdateType updateType;         // "EXCLUDE" (제외) or "MODIFY" (수정)
     private String modifiedTitle;         // 수정된 제목 (선택 사항)
     private String modifiedContent;       // 수정된 내용 (선택 사항)
 
@@ -32,9 +32,9 @@ public class Recurrence {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;            // 원래 일정과의 관계
 
-    public Recurrence(LocalDate exceptionDate, String exceptionType, Schedule schedule) {
+    public Recurrence(LocalDate exceptionDate, RecurrenceUpdateType updateType, Schedule schedule) {
         this.exceptionDate = exceptionDate;
-        this.exceptionType = exceptionType;
+        this.updateType = updateType;
         this.schedule = schedule;
     }
 }

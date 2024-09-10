@@ -2,11 +2,13 @@ package com.calendar.clush_back.schedule.repository;
 
 import com.calendar.clush_back.schedule.entity.Recurrence;
 import com.calendar.clush_back.schedule.entity.Schedule;
+import java.time.LocalDate;
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public interface RecurrenceRepository extends JpaRepository<Recurrence, Long>,
-    CustomRecurrenceRepository {
+public interface CustomRecurrenceRepository {
 
     List<Recurrence> findAllBySchedule(Schedule schedule);
+
+    Optional<Recurrence> findByScheduleAndExceptionDate(Schedule schedule, LocalDate exceptionDate);
 }

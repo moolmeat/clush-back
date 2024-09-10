@@ -31,7 +31,6 @@ public class UserController {
     // @ApiOperation 대신 @Operation 사용
     @ApiResponses(value = {
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-        @ApiResponse(responseCode = "422", description = "잘못된 사용자 이름/비밀번호 입력")
     })
     public String login(@RequestBody LoginRequest loginRequest) {
         return userService.signin(loginRequest.getEmail(), loginRequest.getPassword());
@@ -49,7 +48,7 @@ public class UserController {
 
     @GetMapping("/{email}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-        @Operation(summary = "사용자 검색", description = "특정 사용자의 정보를 검색합니다.")
+    @Operation(summary = "사용자 검색", description = "특정 사용자의 정보를 검색합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "403", description = "접근이 거부됨"),

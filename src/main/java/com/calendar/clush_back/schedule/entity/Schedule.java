@@ -1,6 +1,7 @@
 package com.calendar.clush_back.schedule.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,22 +20,24 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private String content;
+    private String title;               // 제목
+    private String content;             // 내용
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDate startDate;        // 시작일
+    private LocalDate endDate;          // 종료일
+    private LocalTime startTime;        // 시작 시간
+    private LocalTime endTime;          // 종료 시간
 
-    private String recurrenceType;
-    private String daysOfWeek;
+    private RecurrenceType recurrenceType;      // 예외 타입 (DAILY, WEEKLY, MONTHLY, YEARLY)
+    private List<ScheduleDayOfWeek> daysOfWeek;          // 요일 (타입이 WEEKLY 인 경우만)
 
     @ManyToOne
     @JoinColumn(name = "calendar_group_id")
     private CalendarGroup calendarGroup;
 
-    public Schedule(String title, String content, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String recurrenceType, String daysOfWeek, CalendarGroup calendarGroup) {
+    public Schedule(String title, String content, LocalDate startDate, LocalDate endDate,
+        LocalTime startTime, LocalTime endTime, RecurrenceType recurrenceType,
+        List<ScheduleDayOfWeek> daysOfWeek, CalendarGroup calendarGroup) {
         this.title = title;
         this.content = content;
         this.startDate = startDate;

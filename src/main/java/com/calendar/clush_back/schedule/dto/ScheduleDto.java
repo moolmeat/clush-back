@@ -1,6 +1,9 @@
 package com.calendar.clush_back.schedule.dto;
 
+import com.calendar.clush_back.schedule.entity.ScheduleDayOfWeek;
+import com.calendar.clush_back.schedule.entity.RecurrenceType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -31,13 +34,15 @@ public class ScheduleDto {
     private LocalTime endTime;
 
     @Schema(description = "반복 유형 (DAILY, WEEKLY, MONTHLY, YEARLY)", example = "WEEKLY")
-    private String recurrenceType;
+    private RecurrenceType recurrenceType;
 
     @Schema(description = "반복 요일 (MO, TU, WE TH, FR, SA, SU)", example = "MO, WE, FR")
-    private String daysOfWeek;
+    private List<ScheduleDayOfWeek> daysOfWeek;
 
-    public ScheduleDto(Long id, String title, String content, LocalDate startDate, LocalDate endDate,
-        LocalTime startTime, LocalTime endTime, String recurrenceType, String daysOfWeek) {
+    public ScheduleDto(Long id, String title, String content, LocalDate startDate,
+        LocalDate endDate,
+        LocalTime startTime, LocalTime endTime, RecurrenceType recurrenceType,
+        List<ScheduleDayOfWeek> daysOfWeek) {
         this.id = id;
         this.title = title;
         this.content = content;

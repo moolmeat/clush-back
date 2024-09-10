@@ -1,7 +1,7 @@
 package com.calendar.clush_back.schedule.service;
 
-import com.calendar.clush_back.auth.entity.User;
-import com.calendar.clush_back.auth.repository.UserRepository;
+import static com.calendar.clush_back.schedule.entity.RecurrenceUpdateType.MODIFY;
+
 import com.calendar.clush_back.common.exception.CustomException;
 import com.calendar.clush_back.common.response.CustomResponse;
 import com.calendar.clush_back.schedule.dto.GetScheduleDto;
@@ -10,9 +10,10 @@ import com.calendar.clush_back.schedule.dto.ScheduleDto;
 import com.calendar.clush_back.schedule.dto.UserGroupDto;
 import com.calendar.clush_back.schedule.entity.CalendarGroup;
 import com.calendar.clush_back.schedule.entity.Recurrence;
+import com.calendar.clush_back.schedule.entity.RecurrenceType;
 import com.calendar.clush_back.schedule.entity.Schedule;
+import com.calendar.clush_back.schedule.entity.ScheduleDayOfWeek;
 import com.calendar.clush_back.schedule.mapper.ScheduleMapper;
-import com.calendar.clush_back.schedule.repository.CalendarGroupRepository;
 import com.calendar.clush_back.schedule.repository.RecurrenceRepository;
 import com.calendar.clush_back.schedule.repository.ScheduleRepository;
 import com.calendar.clush_back.schedule.validator.UserGroupValidator;
@@ -20,7 +21,6 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
@@ -109,16 +109,16 @@ public class ScheduleService {
             List<Recurrence> exceptions = recurrenceRepository.findAllBySchedule(schedule);
 
             switch (schedule.getRecurrenceType()) {
-                case "DAILY":
+                case DAILY:
                     handleDailySchedules(result, schedule, fromDate, toDate, exceptions);
                     break;
-                case "WEEKLY":
+                case WEEKLY:
                     handleWeeklySchedules(result, schedule, fromDate, toDate, exceptions);
                     break;
-                case "MONTHLY":
+                case MONTHLY:
                     handleMonthlySchedules(result, schedule, fromDate, toDate, exceptions);
                     break;
-                case "YEARLY":
+                case YEARLY:
                     handleYearlySchedules(result, schedule, fromDate, toDate, exceptions);
                     break;
                 default:
@@ -129,6 +129,7 @@ public class ScheduleService {
         return result;
     }
 
+    // DAILY 반복 일정 추가
     private void handleDailySchedules(List<ScheduleDto> result, Schedule schedule,
         LocalDate fromDate,
         LocalDate toDate, List<Recurrence> exceptions) {
@@ -140,6 +141,7 @@ public class ScheduleService {
 
     }
 
+    // WEEKLY 반복 일정 추가
     private void handleWeeklySchedules(List<ScheduleDto> result, Schedule schedule,
         LocalDate fromDate,
         LocalDate toDate, List<Recurrence> exceptions) {
@@ -152,6 +154,7 @@ public class ScheduleService {
         }
     }
 
+    // MONTHLY 반복 일정 추가
     private void handleMonthlySchedules(List<ScheduleDto> result, Schedule schedule,
         LocalDate fromDate,
         LocalDate toDate, List<Recurrence> exceptions) {
@@ -165,6 +168,7 @@ public class ScheduleService {
         }
     }
 
+    // YEARLY 반복 일정 추가
     private void handleYearlySchedules(List<ScheduleDto> result, Schedule schedule,
         LocalDate fromDate,
         LocalDate toDate, List<Recurrence> exceptions) {
@@ -179,6 +183,7 @@ public class ScheduleService {
         }
     }
 
+    // 반복 일정 예외 검사
     private void processScheduleWithExceptions(List<ScheduleDto> result, Schedule schedule,
         LocalDate startDate, LocalDate endDate, List<Recurrence> exceptions) {
 
@@ -188,7 +193,7 @@ public class ScheduleService {
 
         if (exception.isPresent()) {
             Recurrence recurrence = exception.get();
-            if ("MODIFY".equals(recurrence.getExceptionType())) {
+            if (recurrence.getUpdateType() == MODIFY) {
                 result.add(scheduleMapper.toDto(schedule, recurrence, startDate, startTime, endDate,
                     endTime));
             }
@@ -198,20 +203,24 @@ public class ScheduleService {
         }
     }
 
+    // 예외 일자 검사
     private Optional<Recurrence> getExceptionForDate(List<Recurrence> exceptions, LocalDate date) {
         return exceptions.stream()
             .filter(recurrence -> recurrence.getExceptionDate().equals(date))
             .findFirst();
     }
 
-    // 반복 규칙에 맞는 요일 확인
     private boolean matchesRecurrenceRule(Schedule schedule, LocalDate date) {
-        if ("WEEKLY".equals(schedule.getRecurrenceType()) && schedule.getDaysOfWeek() != null) {
-            String[] daysOfWeek = schedule.getDaysOfWeek().split(",");
-            String dayOfWeek = date.getDayOfWeek().name().substring(0, 2).toUpperCase();
-            return Arrays.asList(daysOfWeek).contains(dayOfWeek);
+        if (RecurrenceType.WEEKLY.equals(schedule.getRecurrenceType())
+            && schedule.getDaysOfWeek() != null) {
+            List<ScheduleDayOfWeek> daysOfWeek = schedule.getDaysOfWeek();
+            // 현재 날짜의 DayOfWeek를 문자열로 변환하여 비교
+            String currentDay = date.getDayOfWeek().name().substring(0, 2).toUpperCase();
+
+            // ScheduleDayOfWeek의 value와 비교
+            return daysOfWeek.stream().anyMatch(day -> day.getValue().equals(currentDay));
         }
-        return true; // 다른 규칙이 없는 경우 기본적으로 일정을 추가
+        return true;
     }
 
     // 스케줄 수정
@@ -244,24 +253,31 @@ public class ScheduleService {
         return CustomResponse.success("스케줄 삭제 성공", null, HttpStatus.NO_CONTENT.value());
     }
 
-    // 반복 일정 중 예외 추가
-    public CustomResponse<Void> addRecurrence(Long scheduleId, RecurrenceDto recurrenceDto,
+    // 반복 일정 중 예외 추가 또는 수정
+    public CustomResponse<Void> updateRecurrence(Long scheduleId, RecurrenceDto recurrenceDto,
         UserDetails userDetails) {
 
+        // 스케줄 유효성 검사
         Schedule schedule = userGroupValidator.checkScheduleValidity(userDetails, scheduleId);
 
-        // Recurrence 생성자가 LocalDate를 받으므로 그대로 사용
-        Recurrence exception = new Recurrence(recurrenceDto.getExceptionDate(),
-            recurrenceDto.getExceptionType(),
-            schedule);
+        // 해당 스케줄과 예외 날짜에 해당하는 Recurrence가 이미 존재하는지 확인
+        Optional<Recurrence> existingRecurrence = recurrenceRepository.findByScheduleAndExceptionDate(
+            schedule, recurrenceDto.getExceptionDate());
 
-        if ("MODIFY".equals(recurrenceDto.getExceptionType())) {
-            exception.setModifiedTitle(recurrenceDto.getModifiedTitle());
-            exception.setModifiedContent(recurrenceDto.getModifiedContent());
-        }
+        Recurrence recurrence = existingRecurrence.orElseGet(() -> new Recurrence(
+            recurrenceDto.getExceptionDate(),
+            recurrenceDto.getUpdateType(),
+            schedule)
+        );
 
-        recurrenceRepository.save(exception);
+        recurrence.setUpdateType(recurrenceDto.getUpdateType());
+        recurrence.setModifiedTitle(recurrenceDto.getModifiedTitle());
+        recurrence.setModifiedContent(recurrenceDto.getModifiedContent());
 
-        return CustomResponse.success("예외 처리 추가 성공", null, 201);
+        recurrenceRepository.save(recurrence);
+
+        String message = existingRecurrence.isPresent() ? "예외 처리 수정 성공" : "예외 처리 추가 성공";
+        return CustomResponse.success(message, null, existingRecurrence.isPresent() ? 200 : 201);
     }
+
 }

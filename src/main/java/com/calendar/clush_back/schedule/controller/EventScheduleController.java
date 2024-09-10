@@ -42,8 +42,6 @@ public class EventScheduleController {
         @RequestBody LocalDate startDate,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        System.out.println(startDate);
-
         return menstrualCycleService.setMenstrualStartDate(calendarGroupId, startDate, userDetails);
     }
 
@@ -61,6 +59,7 @@ public class EventScheduleController {
         @RequestBody GetScheduleDto getScheduleDto,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        return menstrualCycleService.getMenstrualStatuses(calendarGroupId, getScheduleDto, userDetails);
+        return menstrualCycleService.getMenstrualStatuses(calendarGroupId, getScheduleDto,
+            userDetails);
     }
 }

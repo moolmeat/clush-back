@@ -170,7 +170,8 @@ public class InviteService {
             .orElseThrow(() -> new CustomException("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
         CalendarGroup calendarGroup = calendarGroupRepository.findByInviteCode(inviteCode)
-            .orElseThrow(() -> new CustomException("유효하지 않은 초대 코드입니다.", HttpStatus.UNPROCESSABLE_ENTITY));
+            .orElseThrow(
+                () -> new CustomException("유효하지 않은 초대 코드입니다.", HttpStatus.UNPROCESSABLE_ENTITY));
 
         // 이미 그룹 멤버인지 확인
         if (calendarGroup.getUsers().contains(user)) {

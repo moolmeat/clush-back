@@ -26,7 +26,8 @@ public class ScheduleMapper {
         );
     }
 
-    public ScheduleDto toDto(Schedule schedule, LocalDate nextStartDate, LocalTime nextStartTime, LocalDate nextEndDate, LocalTime nextEndTime) {
+    public ScheduleDto toDto(Schedule schedule, LocalDate nextStartDate, LocalTime nextStartTime,
+        LocalDate nextEndDate, LocalTime nextEndTime) {
         return new ScheduleDto(
             schedule.getId(),
             schedule.getTitle(),
@@ -41,7 +42,8 @@ public class ScheduleMapper {
     }
 
     // Recurrence을 사용하여 수정된 ScheduleDto를 생성
-    public ScheduleDto toDto(Schedule schedule, Recurrence exception, LocalDate nextStartDate, LocalTime nextStartTime, LocalDate nextEndDate, LocalTime nextEndTime) {
+    public ScheduleDto toDto(Schedule schedule, Recurrence exception, LocalDate nextStartDate,
+        LocalTime nextStartTime, LocalDate nextEndDate, LocalTime nextEndTime) {
         return new ScheduleDto(
             schedule.getId(),
             exception.getModifiedTitle(),

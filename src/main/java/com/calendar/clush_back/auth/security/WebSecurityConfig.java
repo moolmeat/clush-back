@@ -1,6 +1,5 @@
 package com.calendar.clush_back.auth.security;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,10 +27,12 @@ public class WebSecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/users/signin", "/users/signup", "/h2-console/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll() // 로그인 및 회원가입 경로 허용
+                .requestMatchers("/users/signin", "/users/signup", "/h2-console/**",
+                    "/swagger-ui.html", "/v3/api-docs/**").permitAll() // 로그인 및 회원가입 경로 허용
                 .anyRequest().authenticated() // 나머지 요청은 인증 필요
             )
-            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider),
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -45,7 +45,6 @@ public class ScheduleController {
         @ApiResponse(responseCode = "403", description = "접근이 거부됨"),
         @ApiResponse(responseCode = "404", description = "그룹이 존재하지 않음"),
         @ApiResponse(responseCode = "404", description = "사용자가 존재하지 않음"),
-        @ApiResponse(responseCode = "422", description = "반복 규칙 오류"),
 
     })
     @GetMapping("/{calendarGroupId}")
@@ -83,16 +82,16 @@ public class ScheduleController {
 
     @Operation(summary = "반복 일정 예외 추가", description = "특정 일정에 반복 예외를 추가합니다.")
     @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "반복 일정 예외 수정 성공"),
         @ApiResponse(responseCode = "201", description = "반복 일정 예외 추가 성공"),
         @ApiResponse(responseCode = "403", description = "접근이 거부됨"),
         @ApiResponse(responseCode = "404", description = "일정이 존재하지 않음"),
         @ApiResponse(responseCode = "404", description = "사용자가 존재하지 않음"),
-
     })
     @PostMapping("/{scheduleId}/exceptions")
     public CustomResponse<Void> addRecurrence(@PathVariable Long scheduleId,
         @RequestBody RecurrenceDto recurrenceDto,
         @AuthenticationPrincipal UserDetails userDetails) {
-        return scheduleService.addRecurrence(scheduleId, recurrenceDto, userDetails);
+        return scheduleService.updateRecurrence(scheduleId, recurrenceDto, userDetails);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException.UnprocessableEntity;
 import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
@@ -42,6 +43,12 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(Exception.class)
     public void handleException(HttpServletResponse res) throws IOException {
         res.sendError(HttpStatus.BAD_REQUEST.value(), "Something went wrong");
+    }
+
+    @ExceptionHandler(UnprocessableEntity.class)
+    public void handleUnprocessableEntityException(HttpServletResponse res, HttpServletResponse ex)
+        throws IOException {
+        res.sendError(HttpStatus.UNPROCESSABLE_ENTITY.value(), "UnprocessableEntity");
     }
 
 }
